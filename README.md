@@ -1,8 +1,8 @@
 # Data From Types
 This thing generates data from TypeScript types
 
-<!-- ## Install
-`npm install -S -D data-from-types` -->
+## Install
+`npm install -S -D data-from-types`
 
 ## Usage
 you have the file:
