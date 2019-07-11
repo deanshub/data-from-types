@@ -1,9 +1,9 @@
 import ts from "typescript";
-// import * as faker from "faker";
+import * as faker from "faker";
 type Node = ts.Node & { _declarationBrand: any };
 
 export function getFileSchema(filePath: string): any {
-  const schema: any = {};
+  const schema: any = { type: "root" };
   const program = ts.createProgram([filePath], {
     noEmit: true
   });
@@ -134,7 +134,26 @@ export function getFileSchema(filePath: string): any {
   }
 }
 
-function schemaToData(schema: any): any {}
+function schemaToData(schema: any): any {
+  switch (schema.type) {
+    case "interface":
+      return schema.members.reduce((res: any, cur: any) => {
+        res[cur.name] = schemaToData(cur);
+        return res;
+      }, {});
+    case "string":
+      return faker.name.firstName();
+    case "number":
+      return faker.random.number();
+    case "root":
+      return Object.keys(schema)
+        .filter((key: string) => key !== "type")
+        .reduce((res: any, key: string) => {
+          res[key] = schemaToData(schema[key]);
+          return res;
+        }, {});
+  }
+}
 
 export function getData(filePath: string): any {
   return schemaToData(getFileSchema(filePath));
